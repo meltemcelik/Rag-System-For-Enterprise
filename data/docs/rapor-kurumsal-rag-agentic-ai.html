@@ -1,0 +1,538 @@
+<title>Kurumsal RAG &amp; Agentic AI — Kullanım Şekilleri Raporu</title>
+<style>
+  :root {
+    --bg: #FAFBFC; --surface: #FFFFFF; --ink: #1C2833; --ink-2: #46586A;
+    --muted: #74828F; --accent: #0E7A6E; --accent-ink: #0A5A51;
+    --tint: #EAF4F2; --line: #E2E8ED; --bar: #0E7A6E; --warn-bg: #FBF3E8; --warn-line: #E8D5B8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0F141A; --surface: #151C24; --ink: #E6ECF1; --ink-2: #AEBCC8;
+      --muted: #7E8C99; --accent: #34C7B5; --accent-ink: #5CD6C7;
+      --tint: #142B27; --line: #253039; --bar: #34C7B5; --warn-bg: #2A2117; --warn-line: #4A3A24;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #FAFBFC; --surface: #FFFFFF; --ink: #1C2833; --ink-2: #46586A;
+    --muted: #74828F; --accent: #0E7A6E; --accent-ink: #0A5A51;
+    --tint: #EAF4F2; --line: #E2E8ED; --bar: #0E7A6E; --warn-bg: #FBF3E8; --warn-line: #E8D5B8;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F141A; --surface: #151C24; --ink: #E6ECF1; --ink-2: #AEBCC8;
+    --muted: #7E8C99; --accent: #34C7B5; --accent-ink: #5CD6C7;
+    --tint: #142B27; --line: #253039; --bar: #34C7B5; --warn-bg: #2A2117; --warn-line: #4A3A24;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.65 "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 24px 80px; }
+  h1, h2, h3 { font-family: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif; text-wrap: balance; line-height: 1.25; }
+  h1 { font-size: 2.3rem; margin: 8px 0 12px; }
+  h2 { font-size: 1.55rem; margin: 0 0 14px; }
+  h3 { font-size: 1.15rem; margin: 26px 0 8px; }
+  p { max-width: 70ch; margin: 10px 0; color: var(--ink-2); }
+  p strong, li strong { color: var(--ink); }
+  li { color: var(--ink-2); margin: 5px 0; max-width: 72ch; }
+  a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  .eyebrow { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); font-weight: 600; }
+  .lede { font-size: 1.08rem; color: var(--ink-2); max-width: 66ch; }
+  .meta { font-size: .85rem; color: var(--muted); margin-bottom: 40px; }
+  section { margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line); }
+  /* TOC */
+  nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 22px; margin-top: 28px; }
+  nav.toc ol { margin: 8px 0 0; padding-left: 20px; columns: 2; column-gap: 36px; font-size: .9rem; }
+  nav.toc li { margin: 3px 0; }
+  nav.toc a { text-decoration: none; color: var(--ink-2); }
+  nav.toc a:hover { color: var(--accent-ink); text-decoration: underline; }
+  /* stat tiles */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 22px 0; }
+  .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
+  .tile .num { font-size: 1.7rem; font-weight: 700; color: var(--accent-ink); font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .tile .lbl { font-size: .8rem; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+  /* tables */
+  .tblwrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  th { text-align: left; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--ink-2); }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--tint); }
+  td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+  td .sub { display: block; font-weight: 400; font-size: .8rem; color: var(--muted); white-space: normal; }
+  .num-col { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* bar chart */
+  figure.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px 14px; margin: 18px 0; }
+  figure.chart figcaption { font-size: .82rem; color: var(--muted); margin-top: 12px; }
+  .chart-title { font-size: .95rem; font-weight: 600; color: var(--ink); margin-bottom: 14px; }
+  .brow { display: grid; grid-template-columns: 170px 1fr 64px; align-items: center; gap: 10px; padding: 5px 4px; border-radius: 4px; }
+  .brow:hover { background: var(--tint); }
+  .brow .blbl { font-size: .84rem; color: var(--ink-2); text-align: right; }
+  .brow .btrack { height: 18px; }
+  .brow .bfill { height: 100%; background: var(--bar); border-radius: 0 4px 4px 0; min-width: 2px; }
+  .brow .bval { font-size: .84rem; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  /* callouts */
+  .note { background: var(--tint); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; padding: 12px 16px; margin: 18px 0; font-size: .92rem; color: var(--ink-2); max-width: none; }
+  .warnbox { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 6px; padding: 12px 16px; margin: 18px 0; font-size: .92rem; color: var(--ink-2); }
+  .case { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; margin: 14px 0; }
+  .case h4 { margin: 0 0 6px; font-size: 1rem; color: var(--ink); }
+  .case p { font-size: .9rem; margin: 6px 0; }
+  .case .kv { font-size: .84rem; color: var(--accent-ink); font-weight: 600; }
+  /* tier badges */
+  .tier { display: inline-block; font-size: .68rem; font-weight: 700; letter-spacing: .06em; padding: 1px 7px; border-radius: 10px; border: 1px solid var(--line); color: var(--muted); vertical-align: middle; }
+  .sources li { font-size: .86rem; margin: 4px 0; }
+  .small { font-size: .84rem; color: var(--muted); }
+  @media (max-width: 640px) {
+    nav.toc ol { columns: 1; }
+    .brow { grid-template-columns: 110px 1fr 56px; }
+    h1 { font-size: 1.7rem; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bfill { transition: width .5s ease; }
+  }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Araştırma Raporu · Temmuz 2026</div>
+  <h1>Kurumsal Dünyada RAG ve Agentic AI: Kullanım Şekilleri, Sayılar, Vakalar</h1>
+  <p class="lede">Şirketler retrieval-augmented generation (RAG) sistemlerini ve otonom AI ajanlarını nasıl, nerede ve hangi ölçekte kullanıyor? ~90 kaynağın taranmasıyla hazırlanan nitel + nicel analiz.</p>
+  <p class="meta">Kapsam: kullanım taksonomileri · mimari desenler · pazar verileri · 10+ vaka analizi · teknoloji yığını · güvenlik · iş gücü etkisi · başarısızlık anatomisi</p>
+
+  <div class="tiles">
+    <div class="tile"><div class="num">%67</div><div class="lbl">Fortune 500'de en az bir üretim RAG sistemi (2024: %23)</div></div>
+    <div class="tile"><div class="num">%31</div><div class="lbl">Kurumlarda üretimde en az bir AI ajanı (S&amp;P Global + McKinsey)</div></div>
+    <div class="tile"><div class="num">%95</div><div class="lbl">Ölçülebilir ROI üretemeyen GenAI pilotu (MIT NANDA)</div></div>
+    <div class="tile"><div class="num">~$57 mlr</div><div class="lbl">Agentic AI pazarı 2031 tahmini (2026: ~$9,9 mlr)</div></div>
+    <div class="tile"><div class="num">280×</div><div class="lbl">2 yılda token fiyat düşüşü — buna rağmen kurumsal harcama +%320</div></div>
+    <div class="tile"><div class="num">%40+</div><div class="lbl">2027'ye kadar iptal edilmesi beklenen agentic AI projesi (Gartner)</div></div>
+  </div>
+
+  <nav class="toc">
+    <div class="eyebrow">İçindekiler</div>
+    <ol>
+      <li><a href="#metodoloji">Metodoloji ve kaynak güvenilirliği</a></li>
+      <li><a href="#rag-kullanim">RAG: fonksiyonel kullanım şekilleri</a></li>
+      <li><a href="#rag-mimari">RAG: mimari desenler</a></li>
+      <li><a href="#rag-sayilar">RAG sayılarla</a></li>
+      <li><a href="#rag-vaka">RAG vaka analizleri</a></li>
+      <li><a href="#rag-stack">RAG teknoloji yığını ve değerlendirme</a></li>
+      <li><a href="#agentic-kullanim">Agentic AI: kullanım şekilleri</a></li>
+      <li><a href="#agentic-sayilar">Agentic AI sayılarla</a></li>
+      <li><a href="#agentic-vaka">Agentic AI vaka analizleri</a></li>
+      <li><a href="#framework">Çerçeveler ve protokoller</a></li>
+      <li><a href="#guvenlik">Güvenlik ve yönetişim</a></li>
+      <li><a href="#isgucu">İş gücü etkisi</a></li>
+      <li><a href="#ekonomi">Ekonomi: token paradoksu</a></li>
+      <li><a href="#basarisizlik">Başarısızlık anatomisi ve başaran %5</a></li>
+      <li><a href="#sentez">Sentez: RAG × Agentic kesişimi</a></li>
+      <li><a href="#kaynaklar">Kaynakça</a></li>
+    </ol>
+  </nav>
+</header>
+
+<!-- ============================================================ -->
+<section id="metodoloji">
+  <div class="eyebrow">Bölüm 01</div>
+  <h2>Metodoloji ve kaynak güvenilirliği</h2>
+  <p>Bu rapor Temmuz 2026'da yapılan 9 ayrı web taramasına dayanır (~90 kaynak). Alan, satıcı kaynaklı abartılı rakamlarla dolu olduğu için her sayı üç güvenilirlik kademesinden biriyle etiketlendi:</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Kademe</th><th>Kaynak türü</th><th>Nasıl okunmalı</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tier">T1</span> Birincil</td><td>Gartner, McKinsey, MIT, S&amp;P Global, Deloitte, IDC, PwC, Microsoft WTI, Epoch AI, OWASP</td><td>Yön ve büyüklük sırası güvenilir; metodoloji açık</td></tr>
+      <tr><td><span class="tier">T2</span> Sektör basını</td><td>Fortune, VentureBeat, şirket basın bültenleri (Klarna, Salesforce)</td><td>Şirket beyanları — doğru ama seçilmiş; bağımsız denetimsiz</td></tr>
+      <tr><td><span class="tier">T3</span> Satıcı içeriği</td><td>Ürün blogları, içerik pazarlaması ("%340 ROI" tarzı iddialar)</td><td>Yalnızca eğilim sinyali; mutlak rakam olarak <em>kullanmayın</em></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Kritik okuma notu:</strong> Pazar büyüklüğü tahminleri araştırma firmaları arasında 6 kata kadar farklılaşıyor (ör. RAG 2030: $9,9 mlr — 2034: $67 mlr). Mutlak rakamdan çok <strong>büyüme oranı (%38–49 CAGR her iki alanda) ve yön</strong> güvenilir sinyaldir. Benimseme yüzdeleri de "denedi / üretime aldı / ölçekledi" tanımına göre %17 ile %65 arasında oynar — bu rapor hangi tanımın kullanıldığını her yerde belirtir.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="rag-kullanim">
+  <div class="eyebrow">Bölüm 02 · Nitel</div>
+  <h2>RAG: Fonksiyonel kullanım şekilleri — 10 ana kategori</h2>
+  <p>Şirketlerin RAG'ı ne için kullandığına dair taramada tekrarlayan 10 net kategori ayrışıyor. İlk dördü (bilgi yönetimi, destek, hukuk, finans) yatırımın büyük kısmını çekiyor:</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>#</th><th>Kullanım şekli</th><th>Ne yapıyor</th><th>Nicel sinyal</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Kurumsal bilgi yönetimi<span class="sub">"şirket içi Google"</span></td><td>Doküman, wiki, politika ve prosedür arama; kaynak atıflı cevap</td><td>En yaygın giriş noktası; Morgan Stanley 350.000+ doküman indeksledi</td></tr>
+      <tr><td>2</td><td>Müşteri desteği</td><td>Destek makaleleri + geçmiş çözülmüş vakalara dayalı yanıt</td><td>En yüksek etkileşim hacmi; DoorDash/LinkedIn üretimde</td></tr>
+      <tr><td>3</td><td>Hukuk &amp; uyumluluk</td><td>Mevzuat, sözleşme, içtihat taraması; tam kaynak zinciri</td><td>Hukuk departmanlarının ~%68'i RAG'lı araç kullanıyor <span class="tier">T3</span></td></tr>
+      <tr><td>4</td><td>Finansal araştırma</td><td>Rapor, kazanç çağrısı, piyasa verisi sentezi</td><td>Finansal hizmetler = en büyük RAG pazar segmenti (2025)</td></tr>
+      <tr><td>5</td><td>Klinik karar desteği</td><td>Hakemli literatür + kurum protokolüne dayalı öneri</td><td>Sağlık: 2030'a dek en yüksek CAGR beklenen dikey</td></tr>
+      <tr><td>6</td><td>İK self-servisi</td><td>Politika, izin, yan haklar soruları</td><td>Düşük risk → en sık pilot alanı</td></tr>
+      <tr><td>7</td><td>Satış etkinleştirme</td><td>Teklif/RFP yanıtlarını geçmiş kazanan dokümanlardan üretme</td><td>B2B satışta yaygınlaşıyor</td></tr>
+      <tr><td>8</td><td>Mühendislik bilgi tabanı</td><td>İç kod, API dokümanı, runbook sorgulama</td><td>Teknoloji şirketlerinde standartlaşıyor</td></tr>
+      <tr><td>9</td><td>Ar-Ge / patent tarama</td><td>Bilimsel literatür + patent veritabanı sentezi</td><td>İlaç, kimya, ileri üretim</td></tr>
+      <tr><td>10</td><td>Regülatif raporlama</td><td>KYC/AML, denetim kanıtı toplama, gerçek-zamanlı mevzuat takibi</td><td>Bankacılık/sigorta; agentic RAG ile birleşiyor</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Sektörel yayılım</h3>
+  <p>Dikey bazında liderler <strong>BFSI (banka-finans-sigorta)</strong> ve <strong>sağlık</strong> — ikisinin de ortak motivasyonu halüsinasyon riskini regülasyon altında yönetmek. Perakende/e-ticaret ürün keşfi ve destek otomasyonunda; medya içerik üretiminde; telekom (ör. Bell) bilgi yönetiminde; üretim (ör. Siemens) teknik doküman erişiminde kullanıyor. Eğitim sektörü öğrenme platformlarını RAG ile zenginleştiren geç-benimseyen grupta.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="rag-mimari">
+  <div class="eyebrow">Bölüm 03 · Nitel</div>
+  <h2>RAG: Mimari desenler — 5+1 desen</h2>
+  <p>2026 literatürü kurumsal RAG'ı beş ana desende topluyor; üstüne bir yönlendirme katmanı ekleniyor. Çoğu kurumsal sistem <strong>2. veya 3. desende</strong> karar kılıyor:</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Desen</th><th>Nasıl çalışır</th><th>Ne zaman doğru seçim</th></tr></thead>
+    <tbody>
+      <tr><td>1 · Naive RAG</td><td>embed → vektör ara → üret</td><td>Prototip, dahili araçlar, tek tip doküman. Her projenin başlangıç noktası</td></tr>
+      <tr><td>2 · Hybrid + Rerank</td><td>BM25 (anahtar kelime) + yoğun vektör araması, üstüne reranker</td><td>Regülasyonlu alanlarda fiili standart (hukuk, klinik, finans). Benimseme niyeti tek çeyrekte %10,3 → %33,3</td></tr>
+      <tr><td>3 · Agentic RAG</td><td>Ajanlar retrieval döngüsünün içinde: sorguyu parçalar, kaynak seçer, sonucu doğrular, gerekirse tekrar dener</td><td>Heterojen, büyük bilgi tabanları; tek stratejinin yetmediği karmaşık sorgular</td></tr>
+      <tr><td>4 · GraphRAG</td><td>Bilgi grafı üzerinde çok-adımlı (multi-hop) akıl yürütme; açıklanabilir cevap yolları</td><td>Bağlantılı varlıklar: sözleşme ağları, dava hukuku, organizasyon bilgisi. Gartner 2026 veri &amp; analitik trendi</td></tr>
+      <tr><td>5 · Multimodal RAG</td><td>PDF içi tablo/şema/görsel + ses/video kayıtları üzerinde arama</td><td>Toplantı kayıtları, teknik çizimler, sunum arşivleri (JPMorgan "Ask David" örneği)</td></tr>
+      <tr><td>+ Adaptive RAG</td><td>Sorgu karmaşıklığını sınıflandırıp yukarıdaki desenler arasında yönlendirme</td><td>2026'nın "state of the art"ı; olgun, çok-desenli kurulumlarda</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Sahada kanıtlanmış yığın</strong> (regülasyonlu bilgi işleri için): hibrit retrieval (BM25 + yoğun embedding) + reranker + cevap kullanıcıya gitmeden retrieval hatalarını yakalayan agentic doğrulama adımı. Bu üçlü, taranan kaynaklarda "deployments boyunca ayakta kalan" kombinasyon olarak geçiyor.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="rag-sayilar">
+  <div class="eyebrow">Bölüm 04 · Nicel</div>
+  <h2>RAG sayılarla</h2>
+
+  <h3>Pazar büyüklüğü — firma karşılaştırması</h3>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Araştırma firması</th><th class="num-col">Baz yıl</th><th class="num-col">Hedef</th><th class="num-col">CAGR</th></tr></thead>
+    <tbody>
+      <tr><td>MarketsandMarkets</td><td class="num-col">$1,94 mlr (2025)</td><td class="num-col">$9,86 mlr (2030)</td><td class="num-col">%38,4</td></tr>
+      <tr><td>Grand View Research</td><td class="num-col">— (2025)</td><td class="num-col">$11,0 mlr (2030)</td><td class="num-col">%49,1</td></tr>
+      <tr><td>NextMSC</td><td class="num-col">$2,33 mlr (2025)</td><td class="num-col">$3,33 mlr (2026)</td><td class="num-col">~%43 (yıllık)</td></tr>
+      <tr><td>Precedence Research</td><td class="num-col">$2,76 mlr (2026)</td><td class="num-col">$67,4 mlr (2034)</td><td class="num-col">%49,1</td></tr>
+      <tr><td>ResearchAndMarkets</td><td class="num-col">— (2025)</td><td class="num-col">&gt;$40 mlr (2035)</td><td class="num-col">—</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">Tahminler kapsam tanımına göre 6 kata kadar ayrışıyor; ortak payda %38–49 CAGR bandı.</p>
+
+  <h3>Benimseme</h3>
+  <figure class="chart">
+    <div class="chart-title">Fortune 500'de üretimde en az bir RAG çözümü (%)</div>
+    <div class="brow"><span class="blbl">2024</span><span class="btrack"><span class="bfill" style="width:34%"></span></span><span class="bval">23</span></div>
+    <div class="brow"><span class="blbl">2026</span><span class="btrack"><span class="bfill" style="width:100%"></span></span><span class="bval">67</span></div>
+    <figcaption>İki yılda ~3 kat artış. Kaynak: sektör taraması <span class="tier">T3</span>; yön T1 verileriyle tutarlı.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Gartner:</strong> 2026'ya kadar kurumsal GenAI girişimlerinin <strong>%70'inden fazlası</strong>, halüsinasyon ve uyumluluk riskini yönetmek için yapılandırılmış retrieval hattı gerektirecek. <span class="tier">T1</span></li>
+    <li><strong>Vectara:</strong> Yüksek doğruluk, şeffaflık ve özel veri gerektiren kullanım senaryolarının <strong>%30–60'ında</strong> şirketler RAG'ı seçiyor. <span class="tier">T2</span></li>
+    <li><strong>VentureBeat saha anketi:</strong> Hibrit retrieval'a geçme niyeti tek çeyrekte <strong>%10,3 → %33,3</strong>; aynı ankette katılımcıların <strong>%22'sinin hâlâ hiç üretim RAG'ı yok</strong> — pazar iki uçlu. <span class="tier">T2</span></li>
+    <li><strong>Bölgesel:</strong> Kuzey Amerika %36,4 pay ile lider (2024); Asya-Pasifik en hızlı büyüyen bölge (%42 CAGR). <span class="tier">T1/T2</span></li>
+  </ul>
+
+  <h3>Etki iddiaları — dikkatle okuyun</h3>
+  <div class="warnbox"><strong>Satıcı kaynaklı rakamlar</strong> <span class="tier">T3</span>: "18 ayda ortalama %340 ROI", "bilgi aramada %65 zaman kazanımı", "%78 kullanıcı memnuniyeti artışı", "yanlış bilgi vakalarında %42 azalma". Bunlar içerik pazarlamasından geliyor ve bağımsız doğrulaması yok. Buna karşılık <strong>doğrulanabilir teknik bulgu</strong>: düzgün kurulmuş RAG halüsinasyonu <strong>%71'e kadar azaltıyor</strong>; kötü değerlendirilen RAG ise doğru bilgiye erişmesine rağmen cevapların <strong>%40'ına kadar halüsinasyon</strong> üretebiliyor — yani fark teknolojide değil, değerlendirme disiplininde.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="rag-vaka">
+  <div class="eyebrow">Bölüm 05 · Vakalar</div>
+  <h2>RAG vaka analizleri</h2>
+
+  <div class="case"><h4>Morgan Stanley — danışman bilgi asistanı</h4>
+    <p>GPT-4 + RAG ile 350.000'den fazla özel araştırma dokümanı indekslendi; on yıllara uzanan rapor arşivinde semantik arama. OpenAI ile ortak değerlendirme düzeni: olgusallık, ilgililik ve halüsinasyon oranı testleri + insan geri bildirim döngüsü; SEC uyumu için anonimleştirilmiş sorgularla ince ayar.</p>
+    <p class="kv">Danışman benimseme %98 · doküman bulma başarısı %20 → %80 · cevap süresi 30+ dk → saniyeler · çalışanların ~%50'sinin erişimi var</p></div>
+
+  <div class="case"><h4>JPMorgan — "Ask David" (çoklu-ajan RAG)</h4>
+    <p>Private Bank yatırım araştırma ekibinin sistemi: bir süpervizör ajan; yapılandırılmış veri ajanı, yapılandırılmamış veri (RAG) ajanı ve özel analitik ajanlarını orkestre ediyor. RAG ajanı e-posta, toplantı notu, sunum ve ses/video kayıtlarını vektörleştirip sorguluyor; kritik kararlarda insan-onay döngüsü (human-in-the-loop) var. RAG'ın agentic mimariyle birleştiği referans desen.</p></div>
+
+  <div class="case"><h4>DoorDash — teslimatçı (Dasher) destek chatbotu</h4>
+    <p>Üçlü mimari: RAG sistemi + LLM guardrail + LLM yargıç (judge). Sorun bildirilince konuşma özetlenir, bilgi tabanı ve geçmiş çözülmüş vakalar aranır, cevap üretilir. Yargıç LLM beş metrikte puanlar: retrieval doğruluğu, cevap doğruluğu, dil, bağlam tutarlılığı, ilgililik. Üretim RAG'ında <strong>kalite güvence katmanının</strong> nasıl kurulacağına dair en çok atıf alan örnek.</p></div>
+
+  <div class="case"><h4>LinkedIn — müşteri hizmetleri + bilgi grafı</h4>
+    <p>Geçmiş destek kayıtlarından bilgi grafı kuruldu; sorgu geldiğinde ilgili alt-graf çekilip cevaba temel yapılıyor (GraphRAG deseninin üretim örneği). Benzer vakaların ilişki yapısını koruduğu için düz vektör aramadan daha isabetli eşleştirme raporlanıyor.</p></div>
+
+  <div class="case"><h4>Siemens — üretim/mühendislik bilgi yönetimi</h4>
+    <p>Dijital asistan platformuna gömülü RAG; çalışanlar teknik sorulara iç doküman ve veritabanlarından bağlamsal özet + ilgili doküman listesiyle cevap alıyor. Ağır sanayide dağınık teknik dokümantasyonun tek arayüze bağlanması örneği.</p></div>
+
+  <div class="case"><h4>Bell (telekom) — modüler embedding hatları</h4>
+    <p>Farklı kaynaklardan ham dokümanı hem toplu (batch) hem artımlı (incremental) işleyebilen modüler embedding pipeline'ları. Sürekli değişen kurumsal içerikte <strong>indeks tazeliği</strong> problemine mühendislik cevabı.</p></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="rag-stack">
+  <div class="eyebrow">Bölüm 06 · Teknoloji</div>
+  <h2>RAG teknoloji yığını ve değerlendirme</h2>
+
+  <h3>Vektör veritabanı manzarası (2026)</h3>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Ürün</th><th>Konumlanma</th><th>Not</th></tr></thead>
+    <tbody>
+      <tr><td>Pinecone</td><td>Yönetilen (managed) kategori lideri</td><td>Ölçek + performans için tercih; kapalı kaynak</td></tr>
+      <tr><td>Milvus</td><td>Milyar-vektör ölçeğinde kurumsal açık kaynak</td><td>42.000+ GitHub yıldızı; IVF/HNSW/SCANN kontrolü, Kubernetes-native</td></tr>
+      <tr><td>Weaviate</td><td>Multimodal açık kaynak rakip</td><td>Hibrit arama yerleşik</td></tr>
+      <tr><td>Qdrant</td><td>Performans odaklı (Rust)</td><td>Düşük gecikme senaryoları</td></tr>
+      <tr><td>Chroma</td><td>Geliştirici-öncelikli prototipleme</td><td>Hızlı başlangıç; küçük/orta korpus</td></tr>
+      <tr><td>pgvector / FAISS</td><td>"Zaten Postgres'imiz var" + kütüphane yaklaşımı</td><td>Altyapı eklemeden başlamak isteyenler için</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Orkestrasyon çerçeveleri</h3>
+  <ul>
+    <li><strong>LangChain</strong> — 500+ entegrasyon (LLM, vektör deposu, araç); orkestrasyon ve araç yönlendirme katmanı.</li>
+    <li><strong>LlamaIndex</strong> — 160+ veri konektörü, 5.500+ hazır entegrasyon; 2026'da SLA'lı Enterprise sürümü çıktı. Veri alımı (ingestion), indeksleme ve retrieval'da güçlü.</li>
+    <li><strong>Yaygın üretim deseni:</strong> ikisi birlikte — LangChain orkestrasyonu, LlamaIndex veri katmanını yönetiyor.</li>
+  </ul>
+
+  <h3>Değerlendirme: üretime hazır olmanın ölçüsü</h3>
+  <ul>
+    <li><strong>RAGAS metrikleri:</strong> <em>faithfulness</em> (cevaptaki her iddia getirilen bağlamla destekleniyor mu) ve <em>context precision</em> (ilgili parçalar üstte mi) — ikisinde de <strong>0,8+ puan üretime hazır retrieval</strong> kabul ediliyor.</li>
+    <li><strong>Halüsinasyon gerçeği:</strong> iyi kurulum −%71'e kadar azaltır; değerlendirmesiz kurulum doğru veriye rağmen %40'a kadar halüsinasyon üretebilir.</li>
+    <li><strong>Benchmark'lar:</strong> RAGBench, CRAG, LegalBench-RAG, WixQA, T²-RAGBench — alan-spesifik test setleri olgunlaşıyor.</li>
+    <li><strong>Üretimde:</strong> sürekli değerlendirme (A/B, izleme panoları); az sayıda yüksek-sinyal metrik (faithfulness, format doğruluğu, cevap tamlığı) takip edilir. Chunk kalitesi retrieval metriklerinin ön koşulu — chunk boyutu/örtüşmesi ayarlanmadan üst katman optimize edilmez.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="agentic-kullanim">
+  <div class="eyebrow">Bölüm 07 · Nitel</div>
+  <h2>Agentic AI: Kullanım şekilleri — 12 kategori + otonomi merdiveni</h2>
+  <p>Nitel dönüşümün özü: <strong>görev otomasyonundan sonuç sahipliğine geçiş.</strong> Doküman özetleyen AI yerine; dokümanı okuyup veriyi çıkaran, sistemde kaydı oluşturan ve ekibi bilgilendiren ajan.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>#</th><th>Alan</th><th>Somut kullanım</th><th>Olgunluk</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Müşteri hizmetleri</td><td>Ticket'ı uçtan uca triage → teşhis → çözüm</td><td>En olgun; haftalar içinde ölçülebilir etki</td></tr>
+      <tr><td>2</td><td>Yazılım geliştirme</td><td>PR inceleme, test üretimi, build onarımı, otonom PR gönderme; SDLC'nin tamamı</td><td>Yüksek — çıktı ölçülebilir, hata görünür, geri bildirim hızlı</td></tr>
+      <tr><td>3</td><td>DevOps / SRE</td><td>CI/CD orkestrasyonu, rollback, incident triage + runbook önerisi</td><td>Operasyonda en net ROI'li alan</td></tr>
+      <tr><td>4</td><td>Güvenlik</td><td>Pipeline içi SAST/DAST, ajan-yönetimli yama döngüleri</td><td>Büyüyor; aylık yama döngüleri kısalıyor</td></tr>
+      <tr><td>5</td><td>Finans operasyonları</td><td>KYC/AML tarama, mutabakat, ay sonu kapanışı</td><td>Bankacılıkta %200–2000 üretkenlik raporları (McKinsey)</td></tr>
+      <tr><td>6</td><td>Tedarik zinciri</td><td>Rota/filo optimizasyonu, tedarikçi seçimi, sözleşme akışı</td><td>Gartner: harcama 2030'da $53 mlr'a</td></tr>
+      <tr><td>7</td><td>Satış &amp; pazarlama</td><td>Kampanya kur → ölç → optimize et döngüsünü ajan yürütür; insan hedef ve sınırları koyar</td><td>Yaygın ama ROI kanıtı zayıf (MIT bulgusu)</td></tr>
+      <tr><td>8</td><td>İK</td><td>İşe alım eleme, onboarding orkestrasyonu</td><td>Orta</td></tr>
+      <tr><td>9</td><td>Sağlık idari</td><td>Ön yetkilendirme, faturalama, randevu — tam otomasyon</td><td>Sektör benimseme düşük (%18) ama birim etkisi büyük</td></tr>
+      <tr><td>10</td><td>Hukuk</td><td>Sözleşme çıkarımı → sisteme kayıt → ekip bilgilendirme zinciri</td><td>Orta; denetim izi kritik</td></tr>
+      <tr><td>11</td><td>Araştırma ajanları</td><td>Çok kaynaklı derin araştırma + rapor sentezi</td><td>Hızla yaygınlaşıyor</td></tr>
+      <tr><td>12</td><td>Çoklu-ajan orkestrasyonu</td><td>Süpervizör + uzman ajanlar; kurumsal "ajan işletim sistemi"</td><td>Öncü kurumlarda (JPMorgan, EY)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Otonomi merdiveni — şirketler hangi basamakta?</h3>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Basamak</th><th>Tanım</th><th>Yaygınlık (2026)</th></tr></thead>
+    <tbody>
+      <tr><td>1 · Asistan</td><td>İnsan sorar, AI cevaplar (chat, özet)</td><td>Kitlesel — çoğunluk burada</td></tr>
+      <tr><td>2 · Copilot</td><td>AI önerir, insan onaylar/uygular</td><td>Yaygın (kod, e-posta, analiz)</td></tr>
+      <tr><td>3 · Tekil ajan</td><td>AI görevi uçtan uca yürütür, istisnada insana döner</td><td>~%31 kurumda üretimde en az bir örnek</td></tr>
+      <tr><td>4 · Çoklu-ajan sistem</td><td>Ajanlar birbirine iş devreder; süpervizör orkestrasyonu</td><td>&lt;%10 — ölçekleyebilen azınlık</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="agentic-sayilar">
+  <div class="eyebrow">Bölüm 08 · Nicel</div>
+  <h2>Agentic AI sayılarla</h2>
+
+  <h3>Benimseme hunisi: deneyen çok, ölçekleyen az</h3>
+  <figure class="chart">
+    <div class="chart-title">Kurumsal agentic AI hunisi (%, farklı T1 anketlerinin sentezi)</div>
+    <div class="brow"><span class="blbl">Deneyen</span><span class="btrack"><span class="bfill" style="width:100%"></span></span><span class="bval">~65</span></div>
+    <div class="brow"><span class="blbl">Üretimde ≥1 ajan</span><span class="btrack"><span class="bfill" style="width:48%"></span></span><span class="bval">31</span></div>
+    <div class="brow"><span class="blbl">≥1 fonksiyonda ölçekleyen</span><span class="btrack"><span class="bfill" style="width:35%"></span></span><span class="bval">23</span></div>
+    <div class="brow"><span class="blbl">Somut değer üreten</span><span class="btrack"><span class="bfill" style="width:15%"></span></span><span class="bval">&lt;10</span></div>
+    <figcaption>Kaynaklar: S&amp;P Global + McKinsey (üretim %31), McKinsey State of AI (deney %62–65, ölçekleme %23), sentez (&lt;%10 değer). Tanım farkları nedeniyle kesin huni değil, büyüklük sırası.</figcaption>
+  </figure>
+
+  <figure class="chart">
+    <div class="chart-title">Sektöre göre üretimde AI ajanı (%, S&amp;P Global + McKinsey)</div>
+    <div class="brow"><span class="blbl">Bankacılık &amp; sigorta</span><span class="btrack"><span class="bfill" style="width:100%"></span></span><span class="bval">47</span></div>
+    <div class="brow"><span class="blbl">Tüm sektörler (ort.)</span><span class="btrack"><span class="bfill" style="width:66%"></span></span><span class="bval">31</span></div>
+    <div class="brow"><span class="blbl">Sağlık</span><span class="btrack"><span class="bfill" style="width:38%"></span></span><span class="bval">18</span></div>
+    <div class="brow"><span class="blbl">Kamu</span><span class="btrack"><span class="bfill" style="width:30%"></span></span><span class="bval">14</span></div>
+    <figcaption>Regülasyonlu ama veri-zengin sektör (finans) önde; kamu en geride.</figcaption>
+  </figure>
+
+  <h3>Gartner projeksiyonları <span class="tier">T1</span></h3>
+  <ul>
+    <li>2026 sonunda kurumsal uygulamaların <strong>%40'ı göreve-özel ajan içerecek</strong> (2025: &lt;%5). Dikkat: bu "uygulamaya gömülü ajan" — kurumun kendi üretim benimsemesiyle aynı şey değil.</li>
+    <li>Gartner 2026 anketi: büyük kurumların <strong>%61'i</strong> en az bir üretim ajan sistemi çalıştırıyor (2024: %18). S&amp;P'nin %31'iyle fark, örneklem (büyük kurum) ve tanım farkı.</li>
+    <li>Karşı denge: <strong>agentic projelerin %40+'ının 2027'ye kadar iptali</strong> bekleniyor (belirsiz ROI + zayıf risk kontrolleri).</li>
+  </ul>
+
+  <h3>Pazar büyüklüğü</h3>
+  <figure class="chart">
+    <div class="chart-title">Agentic AI pazarı, $ milyar (Mordor Intelligence ana serisi)</div>
+    <div class="brow"><span class="blbl">2025</span><span class="btrack"><span class="bfill" style="width:12%"></span></span><span class="bval">7,0</span></div>
+    <div class="brow"><span class="blbl">2026</span><span class="btrack"><span class="bfill" style="width:17%"></span></span><span class="bval">9,9</span></div>
+    <div class="brow"><span class="blbl">2031 (tahmin)</span><span class="btrack"><span class="bfill" style="width:100%"></span></span><span class="bval">57,4</span></div>
+    <figcaption>CAGR %42,1. Alternatif seriler: M&amp;M "AI Agents" $7,8 mlr (2025) → $52,6 mlr (2030, %46,3); GVR "Enterprise Agentic AI" $2,6 mlr (2024) → $24,5 mlr (2030); IndustryARC $121 mlr (2032). Tüm seriler %42–46 CAGR bandında birleşiyor.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Gartner dikey örneği:</strong> agentic AI'lı tedarik zinciri yazılımı harcaması 2025'te &lt;$2 mlr → 2030'da <strong>$53 mlr</strong>.</li>
+    <li><strong>Beklenti:</strong> liderlerin %92'si iki yıl içinde ölçülebilir ROI bekliyor <span class="tier">T2</span>; süreç-spesifik alanlarda ilk 12 ayda %25–40 operasyonel maliyet düşüşü raporlanıyor <span class="tier">T2/T3</span>.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="agentic-vaka">
+  <div class="eyebrow">Bölüm 09 · Vakalar</div>
+  <h2>Agentic AI vaka analizleri</h2>
+
+  <div class="case"><h4>Klarna — müşteri hizmetleri asistanı</h4>
+    <p>İlk ayda konuşmaların üçte ikisini devraldı. Tüm rakamlar şirket beyanı <span class="tier">T2</span> ama alanın en çok atıf alan vakası.</p>
+    <p class="kv">700 tam-zamanlı temsilciye eşdeğer iş · çözüm süresi 11 dk → &lt;2 dk · tekrar başvuru −%25 · müşteri memnuniyetinde insanla eşitlik · 2024'te ~$40M kâr etkisi</p>
+    <p>Dip not: Klarna sonrasında bir kısım insan temsilciyi geri çağırdı ve "AI-first" söylemini yumuşattı — tam otomasyonun sınırlarına dair önemli bir ders.</p></div>
+
+  <div class="case"><h4>Salesforce Agentforce — hem ürün hem iç kullanım</h4>
+    <p class="kv">Konuşmaların %85'ini çözme iddiası · rutin taleplerin %72'sini devralma · %32 daha hızlı çözüm · memnuniyet +%33</p>
+    <p>CEO Benioff, artan AI self-servisini ~4.000 destek pozisyonunun kaldırılmasına gerekçe gösterdi — agentic AI'ın iş gücü etkisinin en görünür örneklerinden.</p></div>
+
+  <div class="case"><h4>ServiceNow — kendi desteğinde %90 iddiası</h4>
+    <p>Müşteri hizmetleri sorgularının %90'ını AI'ın karşıladığını, buna rağmen işten çıkarma yapılmadığını belirtiyor — "otomasyon = kapasite artışı" anlatısının örneği. <span class="tier">T2</span></p></div>
+
+  <div class="case"><h4>Kodlama ajanları — en hızlı olgunlaşan pazar</h4>
+    <p><strong>Devin:</strong> kurumsal ölçekte yüz binlerce PR merge etti; raporlanan müşteriler arasında Goldman Sachs var. <strong>Amazon Q Developer:</strong> SWE-bench Verified'da %49. <strong>JetBrains Junie:</strong> mühendislik iş akışlarında %30 hızlanma. <strong>Cursor:</strong> Şubat 2026'da <strong>$2 milyar ARR</strong> — izole VM'lerde paralel alt-ajanlar çalıştıran bulut ajanlarıyla. Olgun mühendislik organizasyonlarında PR-inceleme ve test-üretme ajanları artık standart.</p></div>
+
+  <div class="case"><h4>JPMorgan "Ask David" — çoklu-ajan + RAG + insan onayı</h4>
+    <p>Bölüm 05'teki vaka aynı zamanda agentic mimarinin referansı: süpervizör ajan, uzman ajanlar (yapılandırılmış veri / RAG / analitik) ve kritik adımlarda insan onayı. Kurumsal çoklu-ajan sistemlerin bugünkü en gerçekçi şablonu.</p></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="framework">
+  <div class="eyebrow">Bölüm 10 · Teknoloji</div>
+  <h2>Çerçeveler ve protokoller</h2>
+  <ul>
+    <li><strong>LangGraph</strong> — üretim ayak izinde lider: 1.000+ çalışanlı şirketlerin üretim mimari dokümanlarındaki ajan-çerçevesi atıflarının <strong>%34'ü</strong> (Gartner, Q1 2026). Graf tabanlı mimarisi denetim izi ve geri alma (rollback) noktalarına doğal uyduğu için kurumsalda tercih ediliyor.</li>
+    <li><strong>CrewAI</strong> — en hızlı büyüyen: GitHub yıldızı Ocak 2024'te 2.800 → Nisan 2026'da 31.200 (+%1.014); Fortune 500'ün ~%60'ında bir biçimde kullanım iddiası. Rol-tabanlı "ekip" soyutlaması prototiplemede güçlü.</li>
+    <li><strong>AutoGen / Semantic Kernel</strong> — Microsoft ekosistemi; <strong>Claude Agent SDK</strong> 2026 başında üretim dağıtım sayısında AutoGen'i geçti (LangChain State of AI telemetrisi).</li>
+    <li><strong>MCP (Model Context Protocol) + A2A (Agent2Agent)</strong> — 2025'te Linux Foundation yönetimine geçti; bugün her büyük çerçeve MCP'yi doğrudan veya adaptörle destekliyor. Sonuç: araç entegrasyonlarını çerçeveler arasında taşıma maliyeti çöküyor — <strong>kilitlenme (lock-in) azalıyor</strong>, standartlaşma agentic pazarının olgunlaşma sinyali.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="guvenlik">
+  <div class="eyebrow">Bölüm 11 · Risk</div>
+  <h2>Güvenlik ve yönetişim: teoriden gerçek olaylara</h2>
+  <p>2026'nın ayırt edici gelişmesi: agentic güvenlik riskleri <strong>teorik olmaktan çıktı</strong>. OWASP'ın Q1 2026 raporuna göre ilk makalede "olası" diye tarif edilen tehditlerin neredeyse tamamının artık bir CVE'si, satıcı uyarısı veya üretim olayı var.</p>
+  <ul>
+    <li><strong>Prompt injection</strong> üretimdeki agentic güvenlik hatalarının hâlâ bir numaralı sürücüsü; kurumsal veri sızıntısı için pratik bir saldırı vektörüne dönüştü. <span class="tier">T1</span></li>
+    <li><strong>Tedarik zinciri:</strong> Mart 2026'da PyPI'da <strong>LiteLLM paketine arka kapı</strong> — yalnızca 3 saat yayında kaldı ama ~47.000 indirme aldı. LiteLLM; CrewAI, DSPy, Microsoft GraphRAG dahil onlarca ajan çerçevesinin LLM geçidi. Tek bağımlılığın patlama yarıçapını gösteren olay.</li>
+    <li><strong>Saldırı yüzeyi kaydı:</strong> saldırganlar artık model çıktısından çok <strong>ajan kimliklerini, orkestrasyon katmanını ve tedarik zincirini</strong> hedefliyor.</li>
+    <li><strong>Çerçeveler:</strong> OWASP Agentic Top 10 + Agentic Security Initiative; savunma model-düzeyi korumadan <strong>sistem + kimlik + operasyon güvenliğine</strong> kayıyor. Gartner'ın %40 iptal tahmininin iki gerekçesinden biri zaten "zayıf risk kontrolleri".</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="isgucu">
+  <div class="eyebrow">Bölüm 12 · İnsan</div>
+  <h2>İş gücü etkisi</h2>
+  <ul>
+    <li><strong>Microsoft Work Trend Index 2026:</strong> Copilot konuşmalarının <strong>%49'u artık bilişsel iş</strong> (analiz, problem çözme, stratejik düşünme). Kullanıcıların %58'i bir yıl önce yapamayacakları işleri ürettiğini söylüyor; ileri kullanıcılarda bu oran <strong>%80</strong>. <span class="tier">T1</span></li>
+    <li><strong>PwC AI Jobs Barometer:</strong> AI'a en çok maruz şirketler, 2022'den beri üretkenlik büyümesinde en az maruz olanlara karşı <strong>farkı 3'e katladı</strong>; en üst beşte birlik dilim ortalama <strong>%163 üretkenlik büyümesi</strong>. Ve kritik bulgu: bu şirketlerde <strong>istihdam da daha hızlı büyüyor</strong> — AI iş yok edici değil, büyüme kilidi açıcı olarak kullanıldığında iş genişletici. <span class="tier">T1</span></li>
+    <li><strong>Gartner:</strong> 2026 boyunca kurumların %20'si organizasyonu düzleştirmek için AI kullanacak — <strong>mevcut orta yönetim pozisyonlarının yarıdan fazlasının</strong> elenmesi öngörülüyor. <span class="tier">T1</span></li>
+    <li><strong>Beceri açığı asıl dar boğaz:</strong> IDC'ye göre 2026'da küresel kurumların %90+'ı kritik beceri açığıyla karşılaşacak; Deloitte'a göre AI beceri açığı entegrasyonun bir numaralı engeli ve kurumların <strong>%84'ü işleri/iş akışlarını AI'a göre yeniden tasarlamadı</strong>. Liderlerin %89'u önümüzdeki yıl iş etkisine kesin gözüyle bakıyor; %45'i rollerin yarısından fazlasının etkileneceğini düşünüyor. <span class="tier">T1</span></li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="ekonomi">
+  <div class="eyebrow">Bölüm 13 · Ekonomi</div>
+  <h2>Token paradoksu: fiyat 280× düştü, fatura %320 arttı</h2>
+  <div class="tiles">
+    <div class="tile"><div class="num">280×</div><div class="lbl">2 yılda token fiyat düşüşü</div></div>
+    <div class="tile"><div class="num">+%320</div><div class="lbl">Aynı dönemde toplam kurumsal AI harcaması</div></div>
+    <div class="tile"><div class="num">$1,2M → $7M</div><div class="lbl">Ortalama kurumsal AI bütçesi, 2024 → 2026</div></div>
+    <div class="tile"><div class="num">31,5×</div><div class="lbl">Reasoning modellerinin standart modele fiyat primi</div></div>
+  </div>
+  <p><strong>Neden?</strong> Fiyat düşerken hacim patladı; üç yapısal sürücü:</p>
+  <ul>
+    <li><strong>Agentic iş akışları:</strong> tek kullanıcı görevi <strong>10–20 LLM çağrısı</strong> tetikliyor (plan → araç → doğrula → tekrar dene).</li>
+    <li><strong>RAG'ın "bağlam vergisi":</strong> her sorguyla modele binlerce sayfalık bağlam gidiyor; RAG'lı sorgu aynı modelde düz sorgunun <strong>3–5 katı token</strong> tüketiyor.</li>
+    <li><strong>7/24 izleme ajanları:</strong> sürekli açık ajanlar kesintisiz compute tüketiyor.</li>
+  </ul>
+  <ul>
+    <li><strong>Düşüş hızı</strong> (Epoch AI): milestone'a göre yılda 9×–900×; ekonomi-sınıfı modellerde fiyat yarılanma ömrü <strong>1,10 yıl</strong> — Moore Yasası'ndan hızlı. Ancak <strong>frontier reasoning modellerinde fiyat neredeyse hiç düşmüyor.</strong></li>
+    <li><strong>Gartner:</strong> 1 trilyon parametreli LLM çıkarımının maliyeti 2030'da 2025'e göre <strong>%90+ ucuz</strong> olacak. Beklenti: 2027'ye kadar yılda 3–5× düşüş, sonra 1,5–2×'e yavaşlama.</li>
+    <li><strong>Kurumsal ders:</strong> maliyet planı token fiyatına değil <strong>çağrı sayısı × bağlam boyutu</strong>na kurulmalı — tasarruf kolu model seçimi kadar mimari (önbellekleme, yönlendirme, küçük model + gerektiğinde büyük model).</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="basarisizlik">
+  <div class="eyebrow">Bölüm 14 · Gerçeklik</div>
+  <h2>Başarısızlık anatomisi — ve başaran %5'in ortak paydası</h2>
+  <p><strong>MIT NANDA:</strong> GenAI pilotlarının <strong>%95'i ölçülebilir ROI üretemiyor.</strong> Sorun model kalitesi değil; dört kök neden:</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Kök neden</th><th>Mekanizma</th></tr></thead>
+    <tbody>
+      <tr><td>Kirli veri</td><td>Tutarsız, eski, mükerrer, dağınık iç veri → AI bağlam kuramıyor, çıktı güvenilmez</td></tr>
+      <tr><td>Entegrasyon açığı</td><td>Araç iş akışından öğrenmiyor/uyum sağlamıyor; "yan uygulama" olarak kalıyor</td></tr>
+      <tr><td>Yanlış bütçe odağı</td><td>Bütçenin yarıdan fazlası satış/pazarlamada; en büyük ROI ise arka-ofis otomasyonunda çıkıyor</td></tr>
+      <tr><td>KPI'sız vitrin projeleri</td><td>Verimlilik/maliyet/uyumluluk hedefine bağlanmayan "yenilik gösterisi" pilotlar</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Gartner'ın tamamlayıcı uyarısı:</strong> agentic projelerin %40+'ı 2027'ye kadar iptal — belirsiz ROI ve zayıf risk kontrolleri yüzünden. İki bulgu birlikte okunmalı: sorun ne modelde ne pazarda; <strong>seçim ve yürütme disiplininde.</strong></p>
+  <div class="note"><strong>Başaran %5'in ortak paydası:</strong> (1) önce kirli veriyi ele almak, (2) dar kapsamlı ve yüksek değerli tek iş akışı seçmek, (3) KPI'ya bağlamak, (4) governance'ı baştan kurmak, (5) prototip-üretim açığını kapatmış ortaklarla çalışmak. Klarna, Morgan Stanley ve DoorDash vakalarının hepsinde bu desen görülüyor — geniş "AI dönüşümü" değil, tek keskin problem.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="sentez">
+  <div class="eyebrow">Bölüm 15 · Sentez</div>
+  <h2>RAG × Agentic kesişimi ve pratik çıkarımlar</h2>
+  <p>İki alan ayrı pazarlar gibi ölçülüyor ama teknik olarak <strong>birleşiyor</strong>: en olgun kurumsal desen, ajanların retrieval'ı bir araç olarak çağırdığı <em>agentic RAG</em> (JPMorgan şablonu). RAG ajana "kurumsal hafıza", ajan RAG'a "el ve plan" veriyor. 2026 itibarıyla ayrım pazarlama dili; mühendislik gerçeği tek bir yakınsayan yığın.</p>
+  <h3>Yeni bir kurumsal RAG projesi için taramadan süzülen yol haritası</h3>
+  <ul>
+    <li><strong>1. Naive RAG ile başla</strong> (desen 1) — mimariyi kanıtla; retrieval arayüzünü tek bir seam arkasında tut ki desen yükseltmeleri sözleşmeyi bozmasın.</li>
+    <li><strong>2. Değerlendirmeyi koddan önce kur</strong> — RAGAS faithfulness + context precision ≥ 0,8 hedefi; DoorDash'in guardrail + LLM-judge katmanı referans. Değerlendirmesiz RAG %40'a kadar halüsinasyon üretebiliyor.</li>
+    <li><strong>3. Hybrid + rerank'e yükselt</strong> (desen 2) — kurumsal standart bu; hibrit niyeti bir çeyrekte 3 katına çıktı.</li>
+    <li><strong>4. Veri kalitesini teknoloji seçiminden öne al</strong> — MIT'nin %95 bulgusunun bir numaralı kök nedeni kirli veri. "Hangi vektör DB" sorusundan önce "hangi dokümanlar, ne kadar temiz, kim güncelliyor".</li>
+    <li><strong>5. Tek dar iş akışına bağla ve KPI koy</strong> — arama süresi, ilk-temas çözüm oranı, uyumluluk vakası sayısı gibi ölçülebilir tek hedef.</li>
+    <li><strong>6. Governance'ı baştan kur</strong> — kimlik/yetki katmanı, denetim izi, prompt-injection farkındalığı; OWASP Agentic Top 10 kontrol listesi.</li>
+    <li><strong>7. Maliyeti mimariyle yönet</strong> — bağlam vergisi (3–5×) ve ajan çağrı çarpanı (10–20×) bütçeye baştan konmalı; küçük model varsayılan, büyük model istisna.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="kaynaklar">
+  <div class="eyebrow">Bölüm 16</div>
+  <h2>Kaynakça</h2>
+  <h3>T1 — Birincil araştırma</h3>
+  <ul class="sources">
+    <li><a href="https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025">Gartner — %40 kurumsal uygulama göreve-özel ajan (2026)</a></li>
+    <li><a href="https://www.gartner.com/en/newsroom/press-releases/2026-04-07-gartner-forecasts-supply-chain-management-software-with-agentic-ai-will-grow-to-53-billion-in-spend-by-2030">Gartner — Agentic tedarik zinciri yazılımı $53 mlr (2030)</a></li>
+    <li><a href="https://www.gartner.com/en/newsroom/press-releases/2026-03-25-gartner-predicts-that-by-2030-performing-inference-on-an-llm-with-1-trillion-parameters-will-cost-genai-providers-over-90-percent-less-than-in-2025">Gartner — 1T parametre çıkarım maliyeti −%90 (2030)</a></li>
+    <li><a href="https://www.gartner.com/en/articles/hype-cycle-for-agentic-ai">Gartner — 2026 Agentic AI Hype Cycle</a></li>
+    <li><a href="https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/">MIT NANDA (Fortune aktarımı) — GenAI pilotlarının %95'i</a></li>
+    <li><a href="https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html">Deloitte — State of AI in the Enterprise 2026</a></li>
+    <li><a href="https://www.pwc.com/gx/en/services/ai/ai-jobs-barometer.html">PwC — 2026 Global AI Jobs Barometer</a></li>
+    <li><a href="https://www.microsoft.com/en-us/worklab/work-trend-index/agents-human-agency-and-the-opportunity-for-every-organization">Microsoft — 2026 Work Trend Index</a></li>
+    <li><a href="https://epoch.ai/data-insights/llm-inference-price-trends">Epoch AI — LLM çıkarım fiyat eğilimleri</a></li>
+    <li><a href="https://genai.owasp.org/2026/04/14/owasp-genai-exploit-round-up-report-q1-2026/">OWASP — GenAI Exploit Round-up Q1 2026</a></li>
+    <li><a href="https://owasp.org/www-project-agentic-skills-top-10/">OWASP — Agentic Top 10</a></li>
+  </ul>
+  <h3>T2 — Sektör basını ve şirket beyanları</h3>
+  <ul class="sources">
+    <li><a href="https://venturebeat.com/data/the-retrieval-rebuild-why-hybrid-retrieval-intent-tripled-as-enterprise-rag-programs-hit-the-scale-wall">VentureBeat — Hibrit retrieval niyeti 3 katına çıktı</a></li>
+    <li><a href="https://www.klarna.com/international/press/klarna-ai-assistant-handles-two-thirds-of-customer-service-chats-in-its-first-month/">Klarna — AI asistan basın bülteni</a></li>
+    <li><a href="https://www.salesforce.com/blog/agentforce-service/">Salesforce — Agentforce Service</a></li>
+    <li><a href="https://cxfoundation.com/news/servicenow-claims-ai-handles-90-percent-customer-service">CX Foundation — ServiceNow %90 iddiası</a></li>
+    <li><a href="https://www.zenml.io/llmops-database/enterprise-knowledge-management-with-llms-morgan-stanley-s-gpt-4-implementation">ZenML LLMOps DB — Morgan Stanley vakası</a></li>
+    <li><a href="https://www.zenml.io/llmops-database/multi-agent-investment-research-assistant-with-rag-and-human-in-the-loop">ZenML LLMOps DB — JPMorgan "Ask David"</a></li>
+    <li><a href="https://www.evidentlyai.com/blog/rag-examples">Evidently AI — 10 gerçek RAG örneği (DoorDash, LinkedIn, Siemens, Bell)</a></li>
+    <li><a href="https://www.helpnetsecurity.com/2026/06/11/owasp-prompt-injection-ai-security-failures/">Help Net Security — Prompt injection üretim hataları</a></li>
+    <li><a href="https://www.langchain.com/state-of-agent-engineering">LangChain — State of AI Agents</a></li>
+    <li><a href="https://www.marketsandmarkets.com/PressReleases/retrieval-augmented-generation-rag.asp">MarketsandMarkets — RAG pazarı</a></li>
+    <li><a href="https://www.grandviewresearch.com/industry-analysis/retrieval-augmented-generation-rag-market-report">Grand View Research — RAG pazarı</a></li>
+    <li><a href="https://www.precedenceresearch.com/retrieval-augmented-generation-market">Precedence Research — RAG pazarı</a></li>
+    <li><a href="https://www.mordorintelligence.com/industry-reports/agentic-ai-market">Mordor Intelligence — Agentic AI pazarı</a></li>
+    <li><a href="https://www.marketsandmarkets.com/Market-Reports/ai-agents-market-15761548.html">MarketsandMarkets — AI Agents pazarı</a></li>
+    <li><a href="https://www.grandviewresearch.com/industry-analysis/enterprise-agentic-ai-market-report">Grand View Research — Enterprise Agentic AI</a></li>
+  </ul>
+  <h3>T3 — Satıcı/analiz içerikleri (eğilim sinyali olarak kullanıldı)</h3>
+  <ul class="sources">
+    <li><a href="https://www.synvestable.com/enterprise-rag.html">Synvestable — Enterprise RAG Guide 2026</a></li>
+    <li><a href="https://atlan.com/know/rag-architecture/">Atlan — RAG Architecture Guide</a></li>
+    <li><a href="https://www.evidentlyai.com/llm-guide/rag-evaluation">Evidently — RAG değerlendirme rehberi</a></li>
+    <li><a href="https://labelyourdata.com/articles/llm-fine-tuning/rag-evaluation">Label Your Data — RAG Evaluation 2026</a></li>
+    <li><a href="https://www.datacamp.com/blog/the-top-5-vector-databases">DataCamp — Vektör veritabanları 2026</a></li>
+    <li><a href="https://northflank.com/blog/top-enterprise-coding-agents">Northflank — Kurumsal kodlama ajanları</a></li>
+    <li><a href="https://www.ibm.com/think/topics/ai-agent-use-cases">IBM — AI Agent Use Cases</a></li>
+    <li><a href="https://presenc.ai/research/multi-agent-orchestration-frameworks-2026">Presenc — Çoklu-ajan orkestrasyon çerçeveleri</a></li>
+    <li><a href="https://oplexa.com/ai-inference-cost-crisis-2026/">Oplexa — AI çıkarım maliyet analizi</a></li>
+    <li><a href="https://www.digitalapplied.com/blog/agentic-ai-statistics-2026-definitive-collection-150-data-points">Digital Applied — 150+ agentic veri noktası derlemesi</a></li>
+  </ul>
+  <p class="small">Rapor Temmuz 2026'da, halka açık web kaynaklarının taranmasıyla hazırlanmıştır. Pazar rakamları ilgili firmaların kamuya açıkladığı özet verilerdir; tam raporlar ücretli olduğundan birebir doğrulama yapılamamıştır.</p>
+</section>
+</div>

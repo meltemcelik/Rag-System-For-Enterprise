@@ -1,0 +1,16 @@
+# Cok turlu (takip sorusu) altin seti — sohbet hattini olcer, retriever'i degil.
+# Her satir: onceki konusma + tek basina ANLAMSIZ bir takip sorusu + beklenen kaynak.
+# Amac: app/query.py sikistirmasi olmadan bulunamayacak sorular.
+{"history": ["Yillik izin kac gun?", "Tam zamanli calisanlar icin 20 is gunu."], "followup": "peki devri?", "expected_sources": ["sirket_izin_politikasi.md"]}
+{"history": ["Yillik izin kac gun?", "Tam zamanli calisanlar icin 20 is gunu."], "followup": "ne zaman talep etmeliyim?", "expected_sources": ["sirket_izin_politikasi.md"]}
+{"history": ["Yillik izin devri nasil isliyor?", "En fazla 10 gun devredilebilir."], "followup": "son tarihi ne?", "expected_sources": ["sirket_izin_politikasi.md"]}
+{"history": ["Sehir ici ulasim masrafi nasil hesaplanir?", "Kilometre basina 7 TL."], "followup": "onayi kim veriyor?", "expected_sources": ["masraf_yonetmeligi.md"]}
+{"history": ["Masraf onay esigi nedir?", "5.000 TL uzeri direktor onayi ister."], "followup": "altindakiler icin kim onaylar?", "expected_sources": ["masraf_yonetmeligi.md"]}
+{"history": ["Sehir disi gorevde yemek limiti var mi?", "Evet, gunluk bir ust sinir tanimli."], "followup": "ne kadar?", "expected_sources": ["masraf_yonetmeligi.md"]}
+{"history": ["Parola kurallari nedir?", "En az 12 karakter olmalidir."], "followup": "zorunlu mu?", "expected_sources": ["bilgi_guvenligi.txt"]}
+{"history": ["Bilgi guvenligi politikasi neleri kapsiyor?", "Parola, cihaz ve veri paylasimi kurallarini."], "followup": "tasinabilir bellek serbest mi?", "expected_sources": ["bilgi_guvenligi.txt"]}
+{"history": ["Sirket verilerine uzaktan erisim mumkun mu?", "Belirli kosullarla mumkundur."], "followup": "kendi bilgisayarimla olur mu?", "expected_sources": ["bilgi_guvenligi.txt"]}
+{"history": ["Izin talebi nasil yapilir?", "Yoneticiye onceden bildirilerek."], "followup": "kac gun onceden?", "expected_sources": ["sirket_izin_politikasi.md"]}
+{"history": ["Parolam kac karakter olmali?", "Parolalar en az 12 karakter olmalidir."], "followup": "Ne siklikla degistirmem gerekiyor?", "expected_sources": ["bilgi_guvenligi.txt"]}
+{"history": ["Is yemegi icin gunluk limit ne kadar?", "Sehir disi gorevlerde gunluk yemek limiti 500 TL'dir."], "followup": "Fatura olmadan olur mu?", "expected_sources": ["masraf_yonetmeligi.md"]}
+{"history": ["Yillik iznim kac gun?", "Yillik izin tam zamanli calisanlar icin 20 is gunudur."], "followup": "Talebi kime iletiyorum?", "expected_sources": ["sirket_izin_politikasi.md"]}

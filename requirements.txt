@@ -1,0 +1,11 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+httpx==0.28.1
+# Sohbetin tamami /ws/chat uzerinden akiyor ve test/olcum betikleri websockets'i
+# DOGRUDAN import ediyor. uvicorn[standard] zaten getiriyor, ama dolayli bir
+# bagimliliga guvenmemek icin acikca yaziliyor.
+websockets==17.0
+pydantic-settings==2.7.1
+python-multipart==0.0.20
+pypdf==5.1.0
+pymupdf==1.25.1

@@ -1,0 +1,31 @@
+# Yerel sanal ortam ve derlenmis bytecode (makineye ozel, secret degil)
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# NOT: .env bilincli olarak commitli — depo private ve yalnizca gelistirici
+# ekip erisiyor, herkesin ayni ayarla calismasi tercih edildi. Icinde
+# SECRET_KEY ve ADMIN_PASSWORD var; depo public yapilirsa IKISI DE
+# DONDURULMELI (eski degerler git gecmisinde kalir).
+.env.local
+
+# Calisma zamaninda olusan kullanici veritabani (auth verisi, commit edilmez)
+data/users.db
+data/*.db
+
+# NOT: data/.rag_cache/ bilincli olarak commitli — paylasimli embedding cache'i
+# sayesinde yeni kurulumda indeksleme icin embedding modeli gerekmez.
+# (Berk'in dalinda bu dizin yok sayiliyordu; ekip karari commitli tutmak yonunde.)
+
+# Editor / isletim sistemi artiklari
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Olcum betiklerinin urettigi gecici ciktilar
+tools/_out/
+
+# Calisma zamaninda olusan belge erisim kurallari (ortama ozgu, commit edilmez)
+data/docs_acl.json

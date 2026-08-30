@@ -1,0 +1,23 @@
+# Ortam degiskenleri — ASLA commit edilmez
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Calisma zamaninda olusan veriler
+data/users.db
+data/*.db
+data/docs_acl.json
+
+# Olcum ciktilari
+tools/_out/
+
+# Editor / isletim sistemi
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

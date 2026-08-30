@@ -1,0 +1,104 @@
+[
+  {
+    "senaryo": "S1 Giris",
+    "durum": "OK",
+    "detay": "",
+    "sure": 0.41324420005548745
+  },
+  {
+    "senaryo": "S2 Temel soru",
+    "durum": "OK",
+    "detay": "cevap='Yıllık izin hakki 20 gün.' | kaynak=['sirket_izin_politikasi.md'] | ilk token=4.6s",
+    "sure": 4.927127400005702
+  },
+  {
+    "senaryo": "S3 Takip sorusu",
+    "durum": "OK",
+    "detay": "cevap='Kullanılmayan yıllık iznin en fazla 10 günü bir sonraki yıla devredile' | kaynak=['sirket_izin_politikasi.md']",
+    "sure": 9.055630499962717
+  },
+  {
+    "senaryo": "S4 Alakasiz soru reddi",
+    "durum": "OK",
+    "detay": "cevap='Bu konuda belgelerimde bilgi bulamadim.'",
+    "sure": 4.430970699992031
+  },
+  {
+    "senaryo": "S5 Turkce karakterli soru",
+    "durum": "OK",
+    "detay": "cevap='Tam zamanlı çalışanlar yılda 20 iş günü ücretli yıllık izne hak kazanı'",
+    "sure": 4.983979800017551
+  },
+  {
+    "senaryo": "S6 Sohbet gecmisi",
+    "durum": "OK",
+    "detay": "3 konusma listelendi",
+    "sure": null
+  },
+  {
+    "senaryo": "S7 Konusmaya devam",
+    "durum": "OK",
+    "detay": "4 -> 6 mesaj (dogru konusmaya yazildi mi)",
+    "sure": 6.169326599978376
+  },
+  {
+    "senaryo": "S8 Oylama",
+    "durum": "OK",
+    "detay": "oy=200, geri bildirim listesinde=True",
+    "sure": null
+  },
+  {
+    "senaryo": "S9 Belge yukleme",
+    "durum": "OK",
+    "detay": "HTTP 201",
+    "sure": null
+  },
+  {
+    "senaryo": "S10 Yeniden indeksleme",
+    "durum": "OK",
+    "detay": "HTTP 200",
+    "sure": 2.639192799979355
+  },
+  {
+    "senaryo": "S10b Yeni belgeye soru",
+    "durum": "OK",
+    "detay": "cevap='Kırmızı panda bambu yer.'",
+    "sure": 5.65148020000197
+  },
+  {
+    "senaryo": "S11 Turkce dosya adi",
+    "durum": "OK",
+    "detay": "-> 'Çalışan Rehberi.md'",
+    "sure": null
+  },
+  {
+    "senaryo": "S12 Rol bazli yetki",
+    "durum": "OK",
+    "detay": "yetkisiz kullaniciya kaynak=YOK",
+    "sure": null
+  },
+  {
+    "senaryo": "S13 Sifre degistirme",
+    "durum": "OK",
+    "detay": "degistirme=200, yeni sifreyle giris=200",
+    "sure": null
+  },
+  {
+    "senaryo": "S14 Kaba kuvvet korumasi",
+    "durum": "OK",
+    "detay": "kodlar=[401, 429] (429 = kilitlendi)",
+    "sure": null
+  },
+  {
+    "senaryo": "S15 RAG durum gorunurlugu",
+    "durum": "OK",
+    "detay": "rag={'mode': 'hybrid', 'chunks': 164, 'groundcheck': False, 'degraded': False, 'embed_model': 'bge-m3', 'embed_model_available': True}",
+    "sure": null
+  },
+  {
+    "senaryo": "S16 Eszamanli 3 soru",
+    "durum": "OK",
+    "detay": "hata=0",
+    "sure": 8.02415579999797
+  }
+]

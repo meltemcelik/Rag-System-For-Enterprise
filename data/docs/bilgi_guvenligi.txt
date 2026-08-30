@@ -1,0 +1,13 @@
+Acme A.Ş. — Bilgi Güvenliği Kuralları
+
+Parolalar en az 12 karakter olmalı, büyük/küçük harf, rakam ve sembol
+içermelidir. Parolalar 90 günde bir değiştirilir ve son 5 parola tekrar
+kullanılamaz. Tüm çalışanlar için iki adımlı doğrulama (2FA) zorunludur.
+
+Şirket verileri yalnızca onaylı cihazlarda ve şirket VPN'i üzerinden
+işlenebilir. Kişisel USB bellek kullanımı yasaktır. Gizli sınıfındaki belgeler
+şirket dışına e-posta ile gönderilemez; paylaşım yalnızca kurumsal dosya
+sistemi üzerinden yetkilendirme ile yapılır.
+
+Şüpheli bir e-posta veya olası bir veri sızıntısı fark edildiğinde derhal
+guvenlik@acme.example adresine bildirilmeli ve olay 1 saat içinde raporlanmalıdır.

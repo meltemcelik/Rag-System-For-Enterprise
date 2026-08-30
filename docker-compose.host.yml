@@ -1,0 +1,30 @@
+# Hizli dogrulama: backend'i konteynerde calistir, HOST'taki Ollama'yi kullan
+# (modeller zaten host'ta oldugu icin yeniden INMEZ).
+#   docker compose -f docker-compose.host.yml up --build
+# Tarayici: http://localhost:8000  (admin: /admin, admin@example.com / admin)
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - DEFAULT_MODEL=llama3.2:3b
+      - RAG_MODE=hybrid
+      - RAG_EMBED_MODEL=bge-m3
+      - RAG_CHUNK_SIZE=400
+      - RAG_CHUNK_OVERLAP=80
+      - RAG_MIN_SCORE_KEYWORD=6.80
+      - RAG_MIN_SCORE_EMBED=0.535
+      - RAG_STRICT=true
+      - DB_PATH=/app/state/users.db
+      - ADMIN_EMAIL=admin@example.com
+      - ADMIN_PASSWORD=admin
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - userdata:/app/state
+      - ragcache:/app/data/.rag_cache
+volumes:
+  userdata:
+  ragcache:

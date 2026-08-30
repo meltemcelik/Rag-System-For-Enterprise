@@ -1,0 +1,104 @@
+[
+  {
+    "senaryo": "S1 Giris",
+    "durum": "OK",
+    "detay": "",
+    "sure": 0.32979660003911704
+  },
+  {
+    "senaryo": "S2 Temel soru",
+    "durum": "OK",
+    "detay": "cevap='Yıllık izin hakki 20 iş gündür.' | kaynak=YOK | ilk token=7.8s",
+    "sure": 8.090493600000627
+  },
+  {
+    "senaryo": "S3 Takip sorusu",
+    "durum": "BASARISIZ",
+    "detay": "cevap='Bu konuda belgelerimde bilgi bulamadim.' | kaynak=YOK",
+    "sure": 2.810268500004895
+  },
+  {
+    "senaryo": "S4 Alakasiz soru reddi",
+    "durum": "OK",
+    "detay": "cevap='Bu konuda belgelerimde bilgi bulamadim.'",
+    "sure": 2.9115668000886217
+  },
+  {
+    "senaryo": "S5 Turkce karakterli soru",
+    "durum": "OK",
+    "detay": "cevap=\"Acme A.Ş.'de tam zamanlı çalışanlar yılda **20 iş günü** ücretli yıllı\"",
+    "sure": 11.14604700007476
+  },
+  {
+    "senaryo": "S6 Sohbet gecmisi",
+    "durum": "YOK",
+    "detay": "endpoint yok (HTTP 404)",
+    "sure": null
+  },
+  {
+    "senaryo": "S7 Konusmaya devam",
+    "durum": "YOK",
+    "detay": "endpoint yok",
+    "sure": null
+  },
+  {
+    "senaryo": "S8 Oylama",
+    "durum": "YOK",
+    "detay": "mesaj kimligi donmuyor",
+    "sure": null
+  },
+  {
+    "senaryo": "S9 Belge yukleme",
+    "durum": "YOK",
+    "detay": "endpoint yok (HTTP 404)",
+    "sure": null
+  },
+  {
+    "senaryo": "S10 Yeniden indeksleme",
+    "durum": "YOK",
+    "detay": "belge yuklenemedi",
+    "sure": null
+  },
+  {
+    "senaryo": "S10b Yeni belgeye soru",
+    "durum": "YOK",
+    "detay": "",
+    "sure": null
+  },
+  {
+    "senaryo": "S11 Turkce dosya adi",
+    "durum": "YOK",
+    "detay": "yukleme ucu yok",
+    "sure": null
+  },
+  {
+    "senaryo": "S12 Rol bazli yetki",
+    "durum": "YOK",
+    "detay": "endpoint yok",
+    "sure": null
+  },
+  {
+    "senaryo": "S13 Sifre degistirme",
+    "durum": "YOK",
+    "detay": "endpoint yok",
+    "sure": null
+  },
+  {
+    "senaryo": "S14 Kaba kuvvet korumasi",
+    "durum": "YOK",
+    "detay": "kodlar=[401] (429 = kilitlendi)",
+    "sure": null
+  },
+  {
+    "senaryo": "S15 RAG durum gorunurlugu",
+    "durum": "YOK",
+    "detay": "health yalnizca model listesi donuyor",
+    "sure": null
+  },
+  {
+    "senaryo": "S16 Eszamanli 3 soru",
+    "durum": "OK",
+    "detay": "hata=0",
+    "sure": 26.18225899990648
+  }
+]

@@ -1,0 +1,61 @@
+# Tek komut (self-contained; Ollama + modeller compose icinde):
+#   docker compose up --build
+# NOT: ilk calistirmada modelleri (llama3.2:3b + bge-m3, ~4GB) indirir -> uzun surer.
+# Hizli dogrulama (host'taki Ollama'yi kullan): docker-compose.host.yml
+services:
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # LLM + embedding modelini tek seferlik indirir, sonra durur.
+  model-pull:
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    entrypoint: ["sh", "-c", "ollama pull ${MODEL:-llama3.2:3b} && ollama pull ${EMBED_MODEL:-bge-m3}"]
+    restart: "no"
+
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - DEFAULT_MODEL=${MODEL:-llama3.2:3b}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - DB_PATH=/app/state/users.db
+      # --- Kalibre edilmis RAG ayarlari (staj boyunca olculdu) ---
+      - RAG_MODE=hybrid
+      - RAG_EMBED_MODEL=${EMBED_MODEL:-bge-m3}
+      - RAG_CHUNK_SIZE=400
+      - RAG_CHUNK_OVERLAP=80
+      - RAG_MIN_SCORE_KEYWORD=6.80
+      - RAG_MIN_SCORE_EMBED=0.535
+      - RAG_STRICT=true
+    volumes:
+      - userdata:/app/state            # kullanicilar (users.db) kalici
+      - ragcache:/app/data/.rag_cache  # embedding cache kalici (her acilista yeniden embed etmesin)
+    depends_on:
+      ollama:
+        condition: service_healthy
+      model-pull:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  ollama:
+  userdata:
+  ragcache:
